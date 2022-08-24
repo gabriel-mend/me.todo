@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "me.todo",
+    "slug": "me-todo",
+    "version": "1.0.0",
+    "sdkVersion": "46.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "me.todo"
+    }
+  }
+}
