@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import uuid from 'react-native-uuid'
 import { AddIcon, FlatList, HStack, IconButton, VStack } from 'native-base'
 import { Alert } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Logo from '../../assets/Logo.svg'
 import { Input } from '../../components/Input'
 import { Task } from '../../components/Task'
-import { getRealm } from '../../database/realm'
+import { getData, storeData } from '../../services/tasks'
 
 type Task = {
   id: string
@@ -19,28 +20,28 @@ export function Home() {
 
   async function handleAddTaskInTodo() {
     if (!task) return
-
-    const realm = await getRealm()
-
     try {
-      const created = realm.write(() => {
-        realm.create('Task', {
-          _id: uuid.v4(),
-          name: task,
-          status: false,
-          created_at: new Date()
-        })
-      })
+      const tasksStorage: Task[] = await getData('@tasks')
 
-      console.log(created)
+      const taskStorage = {
+        id: String(uuid.v4()),
+        name: task,
+        status: false,
+        created_at: new Date()
+      }
+
+      await storeData([taskStorage, ...tasksStorage], '@tasks')
+
+      setTasks([taskStorage, ...tasksStorage])
+
+      console.log(tasksStorage)
 
       Alert.alert('Tarefa', 'Tarefa cadastrada com sucesso!')
 
-      setTask('')
+      // setTask('')
     } catch (e) {
-      return Alert.alert('Tarefa', 'Não foi possivel cadastrar tarefa!')
-    } finally {
-      realm.close()
+      // return Alert.alert('Tarefa', 'Não foi possivel cadastrar tarefa!')
+      console.log(e)
     }
   }
 
